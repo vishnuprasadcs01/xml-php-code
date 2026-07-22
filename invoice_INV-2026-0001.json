@@ -1,0 +1,56 @@
+{
+    "invoice_number": "INV-2026-0001",
+    "issue_date": "2026-06-23T16:58:34Z",
+    "seller": {
+        "name": "ACME Trading Co.",
+        "vat_registration_number": "310122345600003",
+        "address": {
+            "line": "King Fahd Road",
+            "city": "Riyadh",
+            "country": "SA"
+        },
+        "tax_scheme": "VAT"
+    },
+    "buyer": {
+        "name": "Buyer Company Ltd.",
+        "vat_registration_number": "310998877660001",
+        "address": {
+            "line": "Olaya St.",
+            "city": "Riyadh",
+            "country": "SA"
+        }
+    },
+    "items": [
+        {
+            "description": "Item A",
+            "quantity": 2,
+            "unit_price": 150,
+            "net_amount": 300,
+            "tax_rate": 0.1499999999999999944488848768742172978818416595458984375,
+            "tax_amount": 45,
+            "gross_amount": 345
+        },
+        {
+            "description": "Item B",
+            "quantity": 1,
+            "unit_price": 200,
+            "net_amount": 200,
+            "tax_rate": 0.1499999999999999944488848768742172978818416595458984375,
+            "tax_amount": 30,
+            "gross_amount": 230
+        }
+    ],
+    "legal_monetary_total": {
+        "line_extension_amount": 500,
+        "tax_exclusive_amount": 500,
+        "tax_amount": 75,
+        "tax_inclusive_amount": 575,
+        "payable_amount": 575
+    },
+    "zatca_qr_tlv_base64": "ARBBQ01FIFRyYWRpbmcgQ28uAg8zMTAxMjIzNDU2MDAwMDMDFDIwMjYtMDYtMjNUMTY6NTg6MzRaBAY1NzUuMDAFBTc1LjAw",
+    "signature": {
+        "algorithm": null,
+        "value": null,
+        "note": "Signing skipped in demo because no cert.p12 found. Replace cert.p12 and password to enable signing."
+    }
+}
