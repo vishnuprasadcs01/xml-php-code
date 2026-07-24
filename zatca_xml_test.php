@@ -42,6 +42,11 @@ $x509SerialNumber = hexToDecPure($issuerSerialHex);
 // echo "x509SerialNumber: $x509SerialNumber\n";exit;
 // Result: "379112742831380471835263969587287663520528387"
 
+$cert_digest_value=generateZatcaCertDigest($csid);
+// echo "cert_digest_value: $cert_digest_value\n";exit;
+
+
+
 $input = [
     // Basic Meta
     'currency'        => 'SAR',
@@ -107,7 +112,7 @@ $input = [
         'signature_value'     => $seller_private_key,
         'x509_certificate'    => $csid,
         'signing_time'        => date('Y-m-d\TH:i:s'),
-        'cert_digest_value'   => 'ZDMwMmI0MTE1NzVjOTU2NTk4YzVlODhhYmI0ODU2NDUyNTU2YTVhYjhhMDFmN2FjYjk1YTA2OWQ0NjY2MjQ4NQ==',
+        'cert_digest_value'   => $cert_digest_value,
         'x509_issuer_name'    => $x509IssuerName,
         'x509_serial_number'  => $x509SerialNumber,
     ]
@@ -506,3 +511,49 @@ function hexToDecPure(string $hex): string {
     }
     return $dec;
 }
+
+function generateZatcaCertDigest(string $csid): string 
+{
+    // // 1. Strip headers, footers, whitespace, and newlines
+    // $cleanCsid = preg_replace('/\s+/', '', $csid);
+    // $cleanCsid = str_replace(
+    //     ['-----BEGIN CERTIFICATE-----', '-----END CERTIFICATE-----'], 
+    //     '', 
+    //     $cleanCsid
+    // );
+
+
+    // // 2. Decode Base64 to get raw DER binary bytes
+    // $certDer = base64_decode($cleanCsid);
+
+    // return $certDer;
+
+    // // 3. Compute SHA-256 on DER binary bytes (returns 64-char hex string)
+    // $hexHash = hash('sha256', $certDer);
+
+    // // 4. Base64-encode the 64-character Hex string
+    // return base64_encode($hexHash);
+
+    $csid = 'MIID3jCCA4SgAwIBAgITEQAAOAPF90Ajs/xcXwABAAA4AzAKBggqhkjOPQQDAjBiMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxEzARBgoJkiaJk/IsZAEZFgNnb3YxFzAVBgoJkiaJk/IsZAEZFgdleHRnYXp0MRswGQYDVQQDExJQUlpFSU5WT0lDRVNDQTQtQ0EwHhcNMjQwMTExMDkxOTMwWhcNMjkwMTA5MDkxOTMwWjB1MQswCQYDVQQGEwJTQTEmMCQGA1UEChMdTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQxFjAUBgNVBAsTDVJpeWFkaCBCcmFuY2gxJjAkBgNVBAMTHVRTVC04ODY0MzExNDUtMzk5OTk5OTk5OTAwMDAzMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEoWCKa0Sa9FIErTOv0uAkC1VIKXxU9nPpx2vlf4yhMejy8c02XJblDq7tPydo8mq0ahOMmNo8gwni7Xt1KT9UeKOCAgcwggIDMIGtBgNVHREEgaUwgaKkgZ8wgZwxOzA5BgNVBAQMMjEtVFNUfDItVFNUfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzk5OTk5OTk5OTAwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUlJEMjkyOTEaMBgGA1UEDwwRU3VwcGx5IGFjdGl2aXRpZXMwHQYDVR0OBBYEFEX+YvmmtnYoDf9BGbKo7ocTKYK1MB8GA1UdIwQYMBaAFJvKqqLtmqwskIFzVvpP2PxT+9NnMHsGCCsGAQUFBwEBBG8wbTBrBggrBgEFBQcwAoZfaHR0cDovL2FpYTQuemF0Y2EuZ292LnNhL0NlcnRFbnJvbGwvUFJaRUludm9pY2VTQ0E0LmV4dGdhenQuZ292LmxvY2FsX1BSWkVJTlZPSUNFU0NBNC1DQSgxKS5jcnQwDgYDVR0PAQH/BAQDAgeAMDwGCSsGAQQBgjcVBwQvMC0GJSsGAQQBgjcVCIGGqB2E0PsShu2dJIfO+xnTwFVmh/qlZYXZhD4CAWQCARIwHQYDVR0lBBYwFAYIKwYBBQUHAwMGCCsGAQUFBwMCMCcGCSsGAQQBgjcVCgQaMBgwCgYIKwYBBQUHAwMwCgYIKwYBBQUHAwIwCgYIKoZIzj0EAwIDSAAwRQIhALE/ichmnWXCUKUbca3yci8oqwaLvFdHVjQrveI9uqAbAiA9hC4M8jgMBADPSzmd2uiPJA6gKR3LE03U75eqbC/rXA==';
+
+// Step 2: Clean the CSID (Remove PEM headers/footers, newlines, and spaces)
+$cleanCsid = preg_replace('/\s+/', '', $csid);
+$cleanCsid = str_replace(
+    ['-----BEGIN CERTIFICATE-----', '-----END CERTIFICATE-----'],
+    '',
+    $cleanCsid
+);
+
+// Step 3: Decode the Base64 CSID string into raw DER binary bytes
+$certDerBytes = base64_decode($cleanCsid);
+
+// Step 4: Generate SHA-256 hash in lowercase Hex format (64 characters)
+// Note: Do NOT set the 3rd parameter to true; ZATCA expects a lowercase hex string
+$hexHash = hash('sha256', $certDerBytes);
+
+// Step 5: Base64-encode the 64-character Hex string (results in an 88-character string)
+$certDigestValue = base64_encode($hexHash);
+return $certDigestValue;
+}
+
+// Result will be: ZDMwMmI0MTE1NzVjOTU2NTk4YzVlODhhYmI0ODU2NDUyNTU2YTVhYjhhMDFmN2FjYjk1YTA2OWQ0NjY2MjQ4NQ==
