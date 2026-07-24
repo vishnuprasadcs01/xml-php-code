@@ -30,7 +30,7 @@
                 </ds:Reference>
                 <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
                   <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-                  <ds:DigestValue>MWNhMmM5YzgzNjk4ODI1MjhkMjc1NjRkMjllNjhkYmY4NGIyOTgxM2NkMTlkODdhMDhhYzk0NWY1MzljMmU4ZA==</ds:DigestValue>
+                  <ds:DigestValue>Yjg4N2IyYmU4ZDJiNzU2NDczMzkxNzliNTg1OTk3YjQ1ZmZhYjQ2ZDNlMDdiNDFjNWFiYTA3ODBlOWNlMzQ5MQ==</ds:DigestValue>
                 </ds:Reference>
               </ds:SignedInfo>
               <ds:SignatureValue>MEUCIBxyR8rc4K8728wdSF4XSDqPs+rIL+3TFh9m+aNxQPtSAiEA6cHapItvp13yMSu66NbOg2CpomHwUSnYJ9h6uGQ65aY=</ds:SignatureValue>
@@ -43,7 +43,7 @@
                 <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
                   <xades:SignedProperties Id="xadesSignedProperties">
                     <xades:SignedSignatureProperties>
-                      <xades:SigningTime>2026-07-24T15:30:09</xades:SigningTime>
+                      <xades:SigningTime>2026-07-24T18:00:26</xades:SigningTime>
                       <xades:SigningCertificate>
                         <xades:Cert>
                           <xades:CertDigest>
@@ -69,8 +69,8 @@
   <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
   <cbc:ID>SME00023</cbc:ID>
   <cbc:UUID>8d487816-70b8-4ade-a618-9d620b73814a</cbc:UUID>
-  <cbc:IssueDate>2022-09-07</cbc:IssueDate>
-  <cbc:IssueTime>12:21:28</cbc:IssueTime>
+  <cbc:IssueDate>2026-07-24</cbc:IssueDate>
+  <cbc:IssueTime>20:00:26</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="0100000">388</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
