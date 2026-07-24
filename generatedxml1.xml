@@ -30,7 +30,7 @@
                 </ds:Reference>
                 <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
                   <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-                  <ds:DigestValue>MDFkMzFmMDQzYmVhNGFmYTAxOTk2OGVmNzRlMWMwZTMzYjQzODIzMTU5MjY2ZmFkYjQ5YzlhOTRhMGRmMGM0MQ==</ds:DigestValue>
+                  <ds:DigestValue>MWNhMmM5YzgzNjk4ODI1MjhkMjc1NjRkMjllNjhkYmY4NGIyOTgxM2NkMTlkODdhMDhhYzk0NWY1MzljMmU4ZA==</ds:DigestValue>
                 </ds:Reference>
               </ds:SignedInfo>
               <ds:SignatureValue>MEUCIBxyR8rc4K8728wdSF4XSDqPs+rIL+3TFh9m+aNxQPtSAiEA6cHapItvp13yMSu66NbOg2CpomHwUSnYJ9h6uGQ65aY=</ds:SignatureValue>
@@ -43,7 +43,7 @@
                 <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
                   <xades:SignedProperties Id="xadesSignedProperties">
                     <xades:SignedSignatureProperties>
-                      <xades:SigningTime>2026-07-22T18:30:29</xades:SigningTime>
+                      <xades:SigningTime>2026-07-24T15:30:09</xades:SigningTime>
                       <xades:SigningCertificate>
                         <xades:Cert>
                           <xades:CertDigest>
