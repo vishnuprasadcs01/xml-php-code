@@ -9,7 +9,7 @@ ini_set('display_startup_errors', '1');
 // 1. INPUT DATA & CERTIFICATE PARSING
 // ==============================================================================
 
-$invoicehash         = 'V4U5qlZ3yXQ/Si1AC/R8SLc3F+iNy27wdVe8IWRqFAQ=';
+$invoicehash         = '';
 $uuid                = '8d487816-70b8-4ade-a618-9d620b73814a';
 $pih                 = 'NWZIY2ViNjZmYmY1OWM4N2U0ODhkYTU4ZjFiNTkyZmI4ZDAyM2I4OWAyNDhkYWU4ZTQwODEyOThlY2E4MjI2Mg==';
 $seller_private_key  = 'MEUCIBxyR8rc4K8728wdSF4XSDqPs+rIL+3TFh9m+aNxQPtSAiEA6cHapItvp13yMSu66NbOg2CpomHwUSnYJ9h6uGQ65aY=';
@@ -37,7 +37,7 @@ $input = [
 
     'icv'             => '23',
     'pih'             => $pih,
-    'qr_code'         => 'AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzM5OTk5OTk5OTkwMDAwMwMTMjAyMi0wOS0wN1QxMjoyMToyOAQENC42MAUDMC42BixmKzBXQ3FuUGtJbkkrZUw5RzNMQXJ5MTJmVFBmK3RvQzlVWDA3RjRmSStzPQdgTUVVQ0lCeHlSOHJjNEs4NzI4d2RTRjRYU0RxUHMrcklMKzNURmg5bSthTnhRUHRTQWlFQTZjSGFwSXR2cDEzeU1TdTY2TmJPZzJDcG9tSHdVU25ZSjloNnVHUTY1YVk9CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAShYIprRJr0UgStM6/S4CQLVUgpfFT2c+nHa+V/jKEx6PLxzTZcluUOru0/J2jyarRqE4yY2jyDCeLte3UpP1R4',
+    'qr_code'         => '',
 
     'supplier' => [
         'crn'            => '1010010000',
@@ -179,8 +179,10 @@ $trC14n->setAttribute('Algorithm', 'http://www.w3.org/2006/12/xml-c14n11');
 $transforms->appendChild($trC14n);
 $ref1->appendChild($transforms);
 
+$invoiceHash = generateZatcaInvoiceHash($dom);
+
 $ref1->appendChild($dom->createElement('ds:DigestMethod'))->setAttribute('Algorithm', 'http://www.w3.org/2001/04/xmlenc#sha256');
-$ref1->appendChild($dom->createElement('ds:DigestValue', $input['crypto']['digest_value_1']));
+$ref1->appendChild($dom->createElement('ds:DigestValue',$invoiceHash));
 $dsSignedInfo->appendChild($ref1);
 
 // Reference 2 (Xades Signed Properties Placeholder)
@@ -571,4 +573,40 @@ function generateZatcaCertDigest(string $csid): string
     $hexHash      = hash('sha256', $certDerBytes);
 
     return base64_encode($hexHash);
+}
+
+function generateZatcaInvoiceHash(DOMDocument $dom): string
+{
+    // Clone DOM to ensure original tree is untouched
+    $clonedDom = $dom->cloneNode(true);
+    $xpath = new DOMXPath($clonedDom);
+
+    // Register namespaces required for XPath queries
+    $xpath->registerNamespace('ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
+    $xpath->registerNamespace('cac', 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
+    $xpath->registerNamespace('cbc', 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
+
+    // 1. Remove ext:UBLExtensions
+    $ublExtensions = $xpath->query('//ext:UBLExtensions');
+    foreach ($ublExtensions as $node) {
+        $node->parentNode->removeChild($node);
+    }
+
+    // 2. Remove cac:Signature
+    $signatures = $xpath->query('//cac:Signature');
+    foreach ($signatures as $node) {
+        $node->parentNode->removeChild($node);
+    }
+
+    // 3. Remove cac:AdditionalDocumentReference where cbc:ID is 'QR'
+    $qrReferences = $xpath->query("//cac:AdditionalDocumentReference[cbc:ID='QR']");
+    foreach ($qrReferences as $node) {
+        $node->parentNode->removeChild($node);
+    }
+
+    // Canonicalize the document using C14N 1.1 (no comments, exclusive = false)
+    $canonicalXml = $clonedDom->C14N(false, false);
+
+    // Generate SHA-256 binary hash and convert to Base64
+    return base64_encode(hash('sha256', $canonicalXml, true));
 }
