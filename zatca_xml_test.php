@@ -88,7 +88,7 @@ $input = [
 ];
 
 // ==============================================================================
-// 2. DYNAMIC CALCULATIONS
+// 2. DYNAMIC CALCULATIONS & PROGRAMMATIC QR CODE GENERATION
 // ==============================================================================
 
 $lineExtensionTotal = 0.00;
@@ -100,6 +100,22 @@ $vatRate            = $input['vat_percent'] / 100;
 $taxAmount          = round($lineExtensionTotal * $vatRate, 2);
 $taxInclusiveAmount = $lineExtensionTotal + $taxAmount - $input['discount_amount'];
 
+// Extract Public Key from CSID Certificate
+$publicKeyBytes = extractPublicKeyFromCert($csid);
+
+// Generate ZATCA Phase 2 TLV Base64 QR Code String
+$timestampIso = $input['issue_date'] . 'T' . $input['issue_time'] . 'Z';
+
+$input['qr_code'] = generateZatcaPhase2QrCode([
+    1 => $input['supplier']['name'],
+    2 => $input['supplier']['vat_number'],
+    3 => $timestampIso,
+    4 => sprintf("%.2f", $taxInclusiveAmount),
+    5 => sprintf("%.2f", $taxAmount),
+    6 => $input['crypto']['digest_value_1'],
+    7 => $input['crypto']['signature_value'],
+    8 => $publicKeyBytes,
+]);
 // ==============================================================================
 // 3. XML GENERATION (DOMDocument)
 // ==============================================================================
@@ -459,6 +475,29 @@ if (is_writable(__DIR__)) {
 // ==============================================================================
 // 4. HELPER FUNCTIONS
 // ==============================================================================
+
+function generateZatcaPhase2QrCode(array $tags): string
+{
+    $tlvString = '';
+    foreach ($tags as $tagNumber => $value) {
+        $tlvString .= chr($tagNumber) . chr(strlen($value)) . $value;
+    }
+    return base64_encode($tlvString);
+}
+
+/**
+ * Extracts raw public key bytes from CSID certificate
+ */
+function extractPublicKeyFromCert(string $csid): string
+{
+    $certPem = "-----BEGIN CERTIFICATE-----\n" . chunk_split($csid, 64, "\n") . "-----END CERTIFICATE-----";
+    $certResource = openssl_pkey_get_public($certPem);
+    if (!$certResource) {
+        return '';
+    }
+    $details = openssl_pkey_get_details($certResource);
+    return $details['key'] ?? '';
+}
 
 function computeSignedPropertiesDigest(DOMElement $node): string 
 {
