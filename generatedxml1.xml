@@ -30,7 +30,7 @@
                 </ds:Reference>
                 <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
                   <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-                  <ds:DigestValue>MjZiMGJhYzJkYzJlOGVhNDk4Y2RjYTVjNDRiNjg0MmUyNWQ4ZDQ1MGU5ZWZhZWJiZWM0ZDAzYzNhZWU1OTA4Yw==</ds:DigestValue>
+                  <ds:DigestValue>NWRmYzhmNTM5ZTViZDMzMDRmYTVhODM4MGYxODNiM2I2MGM4MzQ1NGI5NjA0NzU2NTBlODlkNWVjZGMwOGU4OQ==</ds:DigestValue>
                 </ds:Reference>
               </ds:SignedInfo>
               <ds:SignatureValue>MEUCIBxyR8rc4K8728wdSF4XSDqPs+rIL+3TFh9m+aNxQPtSAiEA6cHapItvp13yMSu66NbOg2CpomHwUSnYJ9h6uGQ65aY=</ds:SignatureValue>
@@ -43,7 +43,7 @@
                 <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
                   <xades:SignedProperties Id="xadesSignedProperties">
                     <xades:SignedSignatureProperties>
-                      <xades:SigningTime>2026-07-27T10:47:52</xades:SigningTime>
+                      <xades:SigningTime>2026-07-27T16:16:41</xades:SigningTime>
                       <xades:SigningCertificate>
                         <xades:Cert>
                           <xades:CertDigest>
@@ -70,7 +70,7 @@
   <cbc:ID>SME00023</cbc:ID>
   <cbc:UUID>8d487816-70b8-4ade-a618-9d620b73814a</cbc:UUID>
   <cbc:IssueDate>2026-07-27</cbc:IssueDate>
-  <cbc:IssueTime>12:47:52</cbc:IssueTime>
+  <cbc:IssueTime>18:16:41</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="0100000">388</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
@@ -87,7 +87,7 @@
   <cac:AdditionalDocumentReference>
     <cbc:ID>QR</cbc:ID>
     <cac:Attachment>
-      <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzM5OTk5OTk5OTkwMDAwMwMUMjAyNi0wNy0yN1QxMjo0Nzo1MloEBDQuNjAFBDAuNjAGAAdgTUVVQ0lCeHlSOHJjNEs4NzI4d2RTRjRYU0RxUHMrcklMKzNURmg5bSthTnhRUHRTQWlFQTZjSGFwSXR2cDEzeU1TdTY2TmJPZzJDcG9tSHdVU25ZSjloNnVHUTY1YVk9CK4tLS0tLUJFR0lOIFBVQkxJQyBLRVktLS0tLQpNRll3RUFZSEtvWkl6ajBDQVFZRks0RUVBQW9EUWdBRW9XQ0thMFNhOUZJRXJUT3YwdUFrQzFWSUtYeFU5blBwCngydmxmNHloTWVqeThjMDJYSmJsRHE3dFB5ZG84bXEwYWhPTW1Obzhnd25pN1h0MUtUOVVlQT09Ci0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=</cbc:EmbeddedDocumentBinaryObject>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzM5OTk5OTk5OTkwMDAwMwMUMjAyNi0wNy0yN1QxODoxNjo0MVoEBzEwMzUuMDAFBjEzNS4wMAYAB2BNRVVDSUJ4eVI4cmM0Szg3Mjh3ZFNGNFhTRHFQcytySUwrM1RGaDltK2FOeFFQdFNBaUVBNmNIYXBJdHZwMTN5TVN1NjZOYk9nMkNwb21Id1VTbllKOWg2dUdRNjVhWT0Iri0tLS0tQkVHSU4gUFVCTElDIEtFWS0tLS0tCk1GWXdFQVlIS29aSXpqMENBUVlGSzRFRUFBb0RRZ0FFb1dDS2EwU2E5RklFclRPdjB1QWtDMVZJS1h4VTluUHAKeDJ2bGY0eWhNZWp5OGMwMlhKYmxEcTd0UHlkbzhtcTBhaE9NbU5vOGd3bmk3WHQxS1Q5VWVBPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==</cbc:EmbeddedDocumentBinaryObject>
     </cac:Attachment>
   </cac:AdditionalDocumentReference>
   <cac:Signature>
@@ -155,20 +155,20 @@
     <cbc:Amount currencyID="SAR">0.00</cbc:Amount>
     <cac:TaxCategory>
       <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
-      <cbc:Percent>15</cbc:Percent>
+      <cbc:Percent>15.00</cbc:Percent>
       <cac:TaxScheme>
         <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
       </cac:TaxScheme>
     </cac:TaxCategory>
   </cac:AllowanceCharge>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="SAR">0.6</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="SAR">135.00</cbc:TaxAmount>
   </cac:TaxTotal>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="SAR">0.60</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="SAR">135.00</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="SAR">4.00</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="SAR">0.60</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="SAR">900.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="SAR">135.00</cbc:TaxAmount>
       <cac:TaxCategory>
         <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
         <cbc:Percent>15.00</cbc:Percent>
@@ -179,20 +179,20 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="SAR">4.00</cbc:LineExtensionAmount>
-    <cbc:TaxExclusiveAmount currencyID="SAR">4.00</cbc:TaxExclusiveAmount>
-    <cbc:TaxInclusiveAmount currencyID="SAR">4.60</cbc:TaxInclusiveAmount>
+    <cbc:LineExtensionAmount currencyID="SAR">900.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="SAR">900.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="SAR">1035.00</cbc:TaxInclusiveAmount>
     <cbc:AllowanceTotalAmount currencyID="SAR">0.00</cbc:AllowanceTotalAmount>
     <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
-    <cbc:PayableAmount currencyID="SAR">4.60</cbc:PayableAmount>
+    <cbc:PayableAmount currencyID="SAR">1035.00</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
-    <cbc:InvoicedQuantity unitCode="PCE">2.000000</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="SAR">4.00</cbc:LineExtensionAmount>
+    <cbc:InvoicedQuantity unitCode="PCE">1.000000</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="SAR">300.00</cbc:LineExtensionAmount>
     <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="SAR">0.60</cbc:TaxAmount>
-      <cbc:RoundingAmount currencyID="SAR">4.60</cbc:RoundingAmount>
+      <cbc:TaxAmount currencyID="SAR">45.00</cbc:TaxAmount>
+      <cbc:RoundingAmount currencyID="SAR">345.00</cbc:RoundingAmount>
     </cac:TaxTotal>
     <cac:Item>
       <cbc:Name>قلم رصاص</cbc:Name>
@@ -205,7 +205,29 @@
       </cac:ClassifiedTaxCategory>
     </cac:Item>
     <cac:Price>
-      <cbc:PriceAmount currencyID="SAR">2.00</cbc:PriceAmount>
+      <cbc:PriceAmount currencyID="SAR">300.00</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="PCE">2.000000</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="SAR">600.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="SAR">90.00</cbc:TaxAmount>
+      <cbc:RoundingAmount currencyID="SAR">690.00</cbc:RoundingAmount>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Name>دفتر ملاحظات</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>15.00</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="SAR">300.00</cbc:PriceAmount>
     </cac:Price>
   </cac:InvoiceLine>
 </Invoice>

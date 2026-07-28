@@ -26,12 +26,11 @@ $certDigestValue  = generateZatcaCertDigest($csid);
 
 $input = [
     'currency'        => 'SAR',
-    'vat_percent'     => 15.00,
     'profile_id'      => 'reporting:1.0',
     'invoice_id'      => 'SME00023',
     'uuid'            => $uuid,
-   'issue_date' => date('Y-m-d'),
-    'issue_time' => date('H:i:s'),
+    'issue_date'      => date('Y-m-d'),
+    'issue_time'      => date('H:i:s'),
     'invoice_type'    => '388',
     'subtype_name'    => '0100000',
 
@@ -68,11 +67,20 @@ $input = [
 
     'line_items' => [
         [
-            'id'        => '1',
-            'name'      => 'قلم رصاص',
-            'quantity'  => 2.000000,
-            'unit_code' => 'PCE',
-            'price'     => 2.00,
+            'id'          => '1',
+            'name'        => 'قلم رصاص',
+            'quantity'    => 1.000000,
+            'unit_code'   => 'PCE',
+            'price'       => 300.00,
+            'vat_percent' => 15.00, // VAT rate per item
+        ],
+        [
+            'id'          => '2',
+            'name'        => 'دفتر ملاحظات',
+            'quantity'    => 2.000000,
+            'unit_code'   => 'PCE',
+            'price'       => 300.00,
+            'vat_percent' => 15.00, // VAT rate per item
         ],
     ],
 
@@ -92,13 +100,35 @@ $input = [
 // ==============================================================================
 
 $lineExtensionTotal = 0.00;
-foreach ($input['line_items'] as $item) {
-    $lineExtensionTotal += ($item['quantity'] * $item['price']);
+$totalTaxAmount     = 0.00;
+$taxCategories      = [];
+
+foreach ($input['line_items'] as $key => $item) {
+    $lineTotal = round($item['quantity'] * $item['price'], 2);
+    $vatRate   = $item['vat_percent'] / 100;
+    $lineTax   = round($lineTotal * $vatRate, 2);
+
+    // Save line-level calculations
+    $input['line_items'][$key]['line_total'] = $lineTotal;
+    $input['line_items'][$key]['line_tax']   = $lineTax;
+
+    $lineExtensionTotal += $lineTotal;
+    $totalTaxAmount     += $lineTax;
+
+    // Grouping Tax Subtotals by VAT Rate
+    $vatKey = sprintf("%.2f", $item['vat_percent']);
+    if (!isset($taxCategories[$vatKey])) {
+        $taxCategories[$vatKey] = [
+            'percent'        => $item['vat_percent'],
+            'taxable_amount' => 0.00,
+            'tax_amount'     => 0.00,
+        ];
+    }
+    $taxCategories[$vatKey]['taxable_amount'] += $lineTotal;
+    $taxCategories[$vatKey]['tax_amount']     += $lineTax;
 }
 
-$vatRate            = $input['vat_percent'] / 100;
-$taxAmount          = round($lineExtensionTotal * $vatRate, 2);
-$taxInclusiveAmount = $lineExtensionTotal + $taxAmount - $input['discount_amount'];
+$taxInclusiveAmount = $lineExtensionTotal + $totalTaxAmount - $input['discount_amount'];
 
 // Extract Public Key from CSID Certificate
 $publicKeyBytes = extractPublicKeyFromCert($csid);
@@ -111,11 +141,12 @@ $input['qr_code'] = generateZatcaPhase2QrCode([
     2 => $input['supplier']['vat_number'],
     3 => $timestampIso,
     4 => sprintf("%.2f", $taxInclusiveAmount),
-    5 => sprintf("%.2f", $taxAmount),
+    5 => sprintf("%.2f", $totalTaxAmount),
     6 => $input['crypto']['digest_value_1'],
     7 => $input['crypto']['signature_value'],
     8 => $publicKeyBytes,
 ]);
+
 // ==============================================================================
 // 3. XML GENERATION (DOMDocument)
 // ==============================================================================
@@ -182,7 +213,7 @@ $ref1->appendChild($transforms);
 $invoiceHash = generateZatcaInvoiceHash($dom);
 
 $ref1->appendChild($dom->createElement('ds:DigestMethod'))->setAttribute('Algorithm', 'http://www.w3.org/2001/04/xmlenc#sha256');
-$ref1->appendChild($dom->createElement('ds:DigestValue',$invoiceHash));
+$ref1->appendChild($dom->createElement('ds:DigestValue', $invoiceHash));
 $dsSignedInfo->appendChild($ref1);
 
 // Reference 2 (Xades Signed Properties Placeholder)
@@ -349,7 +380,10 @@ $allowanceTaxCatId = $dom->createElement('cbc:ID', 'S');
 $allowanceTaxCatId->setAttribute('schemeID', 'UN/ECE 5305');
 $allowanceTaxCatId->setAttribute('schemeAgencyID', '6');
 $allowanceTaxCat->appendChild($allowanceTaxCatId);
-$allowanceTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.0f", $input['vat_percent'])));
+
+// Default to standard VAT percentage for allowance category
+$defaultVatPercent = reset($taxCategories)['percent'] ?? 15.00;
+$allowanceTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.2f", $defaultVatPercent)));
 
 $allowanceTaxScheme = $dom->createElement('cac:TaxScheme');
 $allowanceTaxSchemeId = $dom->createElement('cbc:ID', 'VAT');
@@ -363,41 +397,46 @@ $invoice->appendChild($allowance);
 
 // --- TaxTotal Blocks ---
 $taxTotal1 = $dom->createElement('cac:TaxTotal');
-$tAmount1 = $dom->createElement('cbc:TaxAmount', sprintf("%.1f", $taxAmount));
+$tAmount1 = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $totalTaxAmount));
 $tAmount1->setAttribute('currencyID', $input['currency']);
 $taxTotal1->appendChild($tAmount1);
 $invoice->appendChild($taxTotal1);
 
 $taxTotal2 = $dom->createElement('cac:TaxTotal');
-$tAmount2 = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $taxAmount));
+$tAmount2 = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $totalTaxAmount));
 $tAmount2->setAttribute('currencyID', $input['currency']);
 $taxTotal2->appendChild($tAmount2);
 
-$taxSubtotal = $dom->createElement('cac:TaxSubtotal');
-$taxableAmt = $dom->createElement('cbc:TaxableAmount', sprintf("%.2f", $lineExtensionTotal));
-$taxableAmt->setAttribute('currencyID', $input['currency']);
-$taxSubtotal->appendChild($taxableAmt);
+// Append dynamic TaxSubtotal breakdown per VAT category
+foreach ($taxCategories as $cat) {
+    $taxSubtotal = $dom->createElement('cac:TaxSubtotal');
+    
+    $taxableAmt = $dom->createElement('cbc:TaxableAmount', sprintf("%.2f", $cat['taxable_amount']));
+    $taxableAmt->setAttribute('currencyID', $input['currency']);
+    $taxSubtotal->appendChild($taxableAmt);
 
-$subTaxAmt = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $taxAmount));
-$subTaxAmt->setAttribute('currencyID', $input['currency']);
-$taxSubtotal->appendChild($subTaxAmt);
+    $subTaxAmt = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $cat['tax_amount']));
+    $subTaxAmt->setAttribute('currencyID', $input['currency']);
+    $taxSubtotal->appendChild($subTaxAmt);
 
-$subTaxCat = $dom->createElement('cac:TaxCategory');
-$subTaxCatId = $dom->createElement('cbc:ID', 'S');
-$subTaxCatId->setAttribute('schemeID', 'UN/ECE 5305');
-$subTaxCatId->setAttribute('schemeAgencyID', '6');
-$subTaxCat->appendChild($subTaxCatId);
-$subTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.2f", $input['vat_percent'])));
+    $subTaxCat = $dom->createElement('cac:TaxCategory');
+    $subTaxCatId = $dom->createElement('cbc:ID', 'S');
+    $subTaxCatId->setAttribute('schemeID', 'UN/ECE 5305');
+    $subTaxCatId->setAttribute('schemeAgencyID', '6');
+    $subTaxCat->appendChild($subTaxCatId);
+    $subTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.2f", $cat['percent'])));
 
-$subTaxScheme = $dom->createElement('cac:TaxScheme');
-$subTaxSchemeId = $dom->createElement('cbc:ID', 'VAT');
-$subTaxSchemeId->setAttribute('schemeID', 'UN/ECE 5153');
-$subTaxSchemeId->setAttribute('schemeAgencyID', '6');
-$subTaxScheme->appendChild($subTaxSchemeId);
-$subTaxCat->appendChild($subTaxScheme);
+    $subTaxScheme = $dom->createElement('cac:TaxScheme');
+    $subTaxSchemeId = $dom->createElement('cbc:ID', 'VAT');
+    $subTaxSchemeId->setAttribute('schemeID', 'UN/ECE 5153');
+    $subTaxSchemeId->setAttribute('schemeAgencyID', '6');
+    $subTaxScheme->appendChild($subTaxSchemeId);
+    $subTaxCat->appendChild($subTaxScheme);
 
-$taxSubtotal->appendChild($subTaxCat);
-$taxTotal2->appendChild($taxSubtotal);
+    $taxSubtotal->appendChild($subTaxCat);
+    $taxTotal2->appendChild($taxSubtotal);
+}
+
 $invoice->appendChild($taxTotal2);
 
 // --- Legal Monetary Total ---
@@ -420,9 +459,6 @@ $invoice->appendChild($legalTotal);
 
 // --- Invoice Line Items ---
 foreach ($input['line_items'] as $item) {
-    $itemLineTotal = $item['quantity'] * $item['price'];
-    $itemTaxAmount = $itemLineTotal * $vatRate;
-
     $invoiceLine = $dom->createElement('cac:InvoiceLine');
     $invoiceLine->appendChild($dom->createElement('cbc:ID', $item['id']));
     
@@ -430,16 +466,16 @@ foreach ($input['line_items'] as $item) {
     $qtyNode->setAttribute('unitCode', $item['unit_code']);
     $invoiceLine->appendChild($qtyNode);
     
-    $lineExtAmtNode = $dom->createElement('cbc:LineExtensionAmount', sprintf("%.2f", $itemLineTotal));
+    $lineExtAmtNode = $dom->createElement('cbc:LineExtensionAmount', sprintf("%.2f", $item['line_total']));
     $lineExtAmtNode->setAttribute('currencyID', $input['currency']);
     $invoiceLine->appendChild($lineExtAmtNode);
     
     $lineTaxTotal = $dom->createElement('cac:TaxTotal');
-    $lineTaxAmt   = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $itemTaxAmount));
+    $lineTaxAmt   = $dom->createElement('cbc:TaxAmount', sprintf("%.2f", $item['line_tax']));
     $lineTaxAmt->setAttribute('currencyID', $input['currency']);
     $lineTaxTotal->appendChild($lineTaxAmt);
     
-    $roundingAmt = $dom->createElement('cbc:RoundingAmount', sprintf("%.2f", $itemLineTotal + $itemTaxAmount));
+    $roundingAmt = $dom->createElement('cbc:RoundingAmount', sprintf("%.2f", $item['line_total'] + $item['line_tax']));
     $roundingAmt->setAttribute('currencyID', $input['currency']);
     $lineTaxTotal->appendChild($roundingAmt);
     $invoiceLine->appendChild($lineTaxTotal);
@@ -449,7 +485,7 @@ foreach ($input['line_items'] as $item) {
     
     $classTaxCat = $dom->createElement('cac:ClassifiedTaxCategory');
     $classTaxCat->appendChild($dom->createElement('cbc:ID', 'S'));
-    $classTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.2f", $input['vat_percent'])));
+    $classTaxCat->appendChild($dom->createElement('cbc:Percent', sprintf("%.2f", $item['vat_percent'])));
     $classTaxCat->appendChild($dom->createElement('cac:TaxScheme'))->appendChild($dom->createElement('cbc:ID', 'VAT'));
     $cacItem->appendChild($classTaxCat);
     $invoiceLine->appendChild($cacItem);
